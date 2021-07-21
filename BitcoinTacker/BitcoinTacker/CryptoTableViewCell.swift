@@ -11,6 +11,7 @@ struct CryptoTableViewCellViewModel {
     let name: String
     let symbol: String
     let price: String
+    let iconUrl: URL?
 }
 
 class CryptoTableViewCell: UITableViewCell {
@@ -38,6 +39,11 @@ class CryptoTableViewCell: UITableViewCell {
         label.font = .systemFont(ofSize: 22, weight: .semibold)
         return label
     }()
+    private let myImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
     
     // Init
     
@@ -47,10 +53,19 @@ class CryptoTableViewCell: UITableViewCell {
         contentView.addSubview(nameLabel)
         contentView.addSubview(symbolLabel)
         contentView.addSubview(priceLabel)
+        contentView.addSubview(myImageView)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        myImageView.image = nil
+        nameLabel.text = nil
+        priceLabel.text = nil
+        symbolLabel.text = nil
     }
     
     // Layout
@@ -58,15 +73,23 @@ class CryptoTableViewCell: UITableViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
+        let size: CGFloat = contentView.frame.size.height / 1.1
+        
         nameLabel.sizeToFit()
         priceLabel.sizeToFit()
         symbolLabel.sizeToFit()
         
-        nameLabel.frame = CGRect(x: 25,
+        myImageView.frame = CGRect(
+            x: 25,
+            y: (contentView.frame.size.height - size) / 2,
+            width: size,
+            height: size)
+        
+        nameLabel.frame = CGRect(x: 30 + size,
                                  y: 0,
                                  width: contentView.frame.size.width / 2,
                                  height: contentView.frame.size.height / 2)
-        symbolLabel.frame = CGRect(x: 25,
+        symbolLabel.frame = CGRect(x: 30 + size,
                                    y: contentView.frame.size.height / 2,
                                    width: contentView.frame.size.width / 2,
                                    height: contentView.frame.size.height / 2)
@@ -83,6 +106,17 @@ class CryptoTableViewCell: UITableViewCell {
         nameLabel.text = viewModel.name
         symbolLabel.text = viewModel.symbol
         priceLabel.text = viewModel.price
+        
+        if let url = viewModel.iconUrl {
+            let task = URLSession.shared.dataTask(with: url) { [weak self] (data, _, _) in
+                if let data = data {
+                    DispatchQueue.main.async {
+                        self?.myImageView.image = UIImage(data: data)
+                    }
+                }
+            }
+            task.resume()
+        }
     }
 
 }

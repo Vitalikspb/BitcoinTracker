@@ -12,7 +12,7 @@ import UIKit
 // MVVM
 
 class ViewController: UIViewController {
-
+    
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero,
                                     style: .grouped)
@@ -20,10 +20,10 @@ class ViewController: UIViewController {
                            forCellReuseIdentifier: CryptoTableViewCell.identifier)
         return tableView
     }()
-    
+    private var timer: Timer?
     private var viewModels = [CryptoTableViewCellViewModel]()
     static let numberFormatter: NumberFormatter = {
-    let formatter = NumberFormatter()
+        let formatter = NumberFormatter()
         formatter.locale = .current
         formatter.allowsFloats = true
         formatter.numberStyle = .currency
@@ -40,6 +40,15 @@ class ViewController: UIViewController {
         
         tableView.delegate = self
         tableView.dataSource = self
+        apiCaller()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.frame = view.bounds
+    }
+    
+    private func apiCaller() {
         APICaller.shared.getAllCryptoData { [weak self] result in
             switch result {
             case .success(let models):
@@ -52,8 +61,8 @@ class ViewController: UIViewController {
                     let iconUrl = URL(
                         string:
                             APICaller.shared.icons.filter({ icon in
-                        icon.asset_id == model.asset_id
-                    }).first?.url ?? "")
+                                icon.asset_id == model.asset_id
+                            }).first?.url ?? "")
                     
                     return CryptoTableViewCellViewModel(
                         name: model.name ?? "N/A",
@@ -71,12 +80,6 @@ class ViewController: UIViewController {
         }
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        tableView.frame = view.bounds
-    }
-
-
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {

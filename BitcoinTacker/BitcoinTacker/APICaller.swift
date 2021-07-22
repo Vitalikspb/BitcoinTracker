@@ -8,6 +8,9 @@
 import Foundation
 
 final class APICaller {
+    
+    // MARK: - Properties
+    
     static let shared = APICaller()
     
     private struct Constant {
@@ -19,9 +22,11 @@ final class APICaller {
     public var icons: [Icon] = []
     private var whenReadyBLock: ((Result<[Crypto], Error>) -> Void)?
     
+    // MARK: - Init
+    
     private init() { }
     
-    // MARK: - public
+    // MARK: - Helper Function
     
     public func getAllCryptoData( complection: @escaping (Result<[Crypto], Error>) -> Void) {
         guard let url = URL(string: Constant.assentsEndPoint + Constant.questionApiKey + Constant.apiKey) else { return }

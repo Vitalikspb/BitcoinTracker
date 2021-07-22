@@ -7,11 +7,9 @@
 
 import UIKit
 
-// API Caller
-// UI
-// MVVM
-
 class ViewController: UIViewController {
+    
+    // MARK: - Properties
     
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero,
@@ -24,12 +22,14 @@ class ViewController: UIViewController {
     private var viewModels = [CryptoTableViewCellViewModel]()
     static let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
-        formatter.locale = .current
+        formatter.locale = Locale(identifier: "ru_RU")
         formatter.allowsFloats = true
         formatter.numberStyle = .currency
         formatter.formatterBehavior = .default
         return formatter
     }()
+    
+    // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,6 +47,8 @@ class ViewController: UIViewController {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
     }
+    
+    // MARK: - Helper Functions
     
     private func apiCaller() {
         APICaller.shared.getAllCryptoData { [weak self] result in
@@ -81,6 +83,8 @@ class ViewController: UIViewController {
     }
     
 }
+
+// MARK: - UITableViewDelegate, UITableViewDataSource
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

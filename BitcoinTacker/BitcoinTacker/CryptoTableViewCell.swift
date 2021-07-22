@@ -7,26 +7,11 @@
 
 import UIKit
 
-class CryptoTableViewCellViewModel {
-    let name: String
-    let symbol: String
-    let price: String
-    let iconUrl: URL?
-    var iconData: Data?
-    
-    init(name: String, symbol: String, price: String, iconUrl: URL?) {
-        self.name = name
-        self.symbol = symbol
-        self.price = price
-        self.iconUrl = iconUrl
-    }
-}
-
 class CryptoTableViewCell: UITableViewCell {
     
-    static let identifier = "CryptoTableViewCell"
+    // MARK: - Properties
     
-    // Subviews
+    static let identifier = "CryptoTableViewCell"
     
     private let nameLabel: UILabel = {
         let label = UILabel()
@@ -53,7 +38,7 @@ class CryptoTableViewCell: UITableViewCell {
         return imageView
     }()
     
-    // Init
+    // MARK: - LifeCycle
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -67,16 +52,6 @@ class CryptoTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        myImageView.image = nil
-        nameLabel.text = nil
-        priceLabel.text = nil
-        symbolLabel.text = nil
-    }
-    
-    // Layout
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -108,7 +83,15 @@ class CryptoTableViewCell: UITableViewCell {
         
     }
     
-    // Configure
+    // MARK: - Helper Functions
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        myImageView.image = nil
+        nameLabel.text = nil
+        priceLabel.text = nil
+        symbolLabel.text = nil
+    }
     
     func configure(with viewModel: CryptoTableViewCellViewModel) {
         nameLabel.text = viewModel.name
